@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Management</string>
+    <string name="project_title_label">项目标题</string>
+    <string name="project_commit_label">项目简介</string>
+    <string name="project_start_label">项目开始时间</string>
+    <string name="project_end_label">项目结束时间</string>
+
+    <string name="task_title_label">任务标题</string>
+    <string name="task_commit_label">任务简介</string>
+    <string name="task_header_label">任务负责人</string>
+    <string name="task_start_label">任务计划开始时间</string>
+    <string name="task_end_label">任务计划结束时间</string>
+
+    <string name="add_task">添加任务</string>
+    <string name="view_tasks">查看任务</string>
+    <string name="operate">操作</string>
+</resources>
