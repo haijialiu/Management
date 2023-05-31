@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -84,6 +85,7 @@ public class ProjectListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view,savedInstanceState);
+
         updateUI();
     }
 
@@ -94,6 +96,7 @@ public class ProjectListFragment extends Fragment {
                     public void onChanged(List<Project> projects) {
                         Log.i(TAG,"得到的projects数为："+projects.size());
                         projectAdapter = new ProjectListRecyclerViewAdapter(projects,getActivity(),mCallbacks);
+
                         projectRecyclerView.setAdapter(projectAdapter);
                     }
                 }

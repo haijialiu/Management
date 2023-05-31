@@ -75,6 +75,7 @@ public class ProjectFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
         viewTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
