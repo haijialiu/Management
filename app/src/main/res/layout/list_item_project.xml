@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/project_list_item"
+    android:name="com.hziee.management.ProjectListFragment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layoutManager="LinearLayoutManager"
+    tools:context=".ProjectListFragment"
+    tools:listitem="@layout/fragment_project">
+
+    <TextView
+        android:id="@+id/project_title"
+        android:layout_width="354dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="工程标题"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/start_time"
+        android:layout_width="118dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="开始时间"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/project_title" />
+
+    <TextView
+        android:id="@+id/div_symbol"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="-"
+        app:layout_constraintStart_toEndOf="@+id/start_time"
+        app:layout_constraintTop_toBottomOf="@+id/project_title" />
+
+    <TextView
+        android:id="@+id/end_time"
+        android:layout_width="118dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:text="结束时间"
+        app:layout_constraintStart_toEndOf="@+id/div_symbol"
+        app:layout_constraintTop_toBottomOf="@+id/project_title" />
+
+    <TextView
+        android:id="@+id/project_count"
+        android:layout_width="78dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:gravity="right"
+        android:text="人数"
+        app:layout_constraintStart_toEndOf="@+id/end_time"
+        app:layout_constraintTop_toBottomOf="@+id/project_title" />
+
+    <TextView
+        android:id="@+id/people_symbol"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:text="人"
+        app:layout_constraintStart_toEndOf="@+id/project_count"
+        app:layout_constraintTop_toBottomOf="@+id/project_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

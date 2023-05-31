@@ -18,17 +18,18 @@ public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-
+    public static void Initialize(Application application){
+        if(instance == null){
+            instance = new LoginRepository(application);
+        }
+    }
     private LoginRepository(Application application) {
         ManagementDatabase db = ManagementDatabase.getDatabase(application);
         mUserDao = db.userDao();
         mAllUsers = mUserDao.getAll();
     }
 
-    public static LoginRepository getInstance(Application application) {
-        if (instance == null) {
-            instance = new LoginRepository(application);
-        }
+    public static LoginRepository getInstance() {
         return instance;
     }
 

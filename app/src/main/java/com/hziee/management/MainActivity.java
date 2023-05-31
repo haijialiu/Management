@@ -13,10 +13,12 @@ public class MainActivity extends AppCompatActivity implements Callbacks{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
         if(fragment == null) {
-            fragment = ManagementFragment.getInstance();
+//            fragment = ManagementFragment.getInstance();
+            fragment = ProjectListFragment.newInstance();
             fm.beginTransaction().add(R.id.fragment_container,fragment).commit();
         }
     }
@@ -24,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements Callbacks{
     @Override
     public void onItemSelected(Integer itemId) {
         Log.d(TAG,"OnItemSelected:"+itemId);
-        ManagementFragment fragment = ManagementFragment.newInstance(itemId);
+        ProjectFragment fragment = ProjectFragment.newInstance(itemId);
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fragment_container,fragment)
                 .addToBackStack(null)

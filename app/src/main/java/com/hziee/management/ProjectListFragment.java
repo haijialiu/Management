@@ -1,18 +1,24 @@
 package com.hziee.management;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hziee.management.placeholder.PlaceholderContent;
+import com.hziee.management.data.ProjectRepository;
+import com.hziee.management.entity.Project;
+
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -21,7 +27,12 @@ public class ProjectListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String TAG = "ProjectListFragment";
     // TODO: Customize parameters
+    private ProjectListViewModel projectListViewModel;
+    private ProjectListRecyclerViewAdapter projectAdapter;
+    private RecyclerView projectRecyclerView;
+    private Callbacks mCallbacks = null;
     private int mColumnCount = 1;
 
     /**
@@ -42,30 +53,54 @@ public class ProjectListFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+        projectListViewModel = new ViewModelProvider(this,ViewModelProvider
+                .AndroidViewModelFactory.getInstance(getActivity().getApplication()))
+                .get(ProjectListViewModel.class);
+        projectListViewModel.initDatabase(ProjectRepository.getInstance());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_project_list, container, false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyProjectListRecyclerViewAdapter(PlaceholderContent.ITEMS));
-        }
+        projectRecyclerView  = view.findViewById(R.id.project_recycler_view);
+        projectRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
+    }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        super.onViewCreated(view,savedInstanceState);
+        updateUI();
+    }
+
+    private void updateUI() {
+        projectListViewModel.getCrimes(ProjectRepository.getInstance()).observe(
+                getViewLifecycleOwner(), new Observer<List<Project>>() {
+                    @Override
+                    public void onChanged(List<Project> projects) {
+                        Log.i(TAG,"得到的projects数为："+projects.size());
+                        projectAdapter = new ProjectListRecyclerViewAdapter(projects,getActivity());
+                        projectRecyclerView.setAdapter(projectAdapter);
+                    }
+                }
+        );
+    }
+
+    public static ProjectListFragment newInstance(){
+        return new ProjectListFragment();
     }
 }

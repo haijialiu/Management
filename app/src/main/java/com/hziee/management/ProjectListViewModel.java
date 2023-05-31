@@ -13,6 +13,10 @@ public class ProjectListViewModel extends ViewModel {
     private ProjectRepository projectRepository;
     private LiveData<List<Project>> crimeListLiveData;
 
+    public void initDatabase(ProjectRepository projectRepository) {
+        projectRepository = projectRepository;
+    }
+
     public LiveData<List<Project>> getCrimes(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
         crimeListLiveData = projectRepository.getProjects();
