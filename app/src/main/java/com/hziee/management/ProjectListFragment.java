@@ -93,7 +93,7 @@ public class ProjectListFragment extends Fragment {
                     @Override
                     public void onChanged(List<Project> projects) {
                         Log.i(TAG,"得到的projects数为："+projects.size());
-                        projectAdapter = new ProjectListRecyclerViewAdapter(projects,getActivity());
+                        projectAdapter = new ProjectListRecyclerViewAdapter(projects,getActivity(),mCallbacks);
                         projectRecyclerView.setAdapter(projectAdapter);
                     }
                 }

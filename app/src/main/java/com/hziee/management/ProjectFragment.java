@@ -58,8 +58,6 @@ public class ProjectFragment extends Fragment {
         addTaskButton = v.findViewById(R.id.add_task);
 
 
-        projectTitleEditText.setText("hello world");
-
         return v;
     }
 
@@ -74,14 +72,24 @@ public class ProjectFragment extends Fragment {
             }
         });
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        viewTasksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
     private void updateUI() {
         projectTitleEditText.setText(mProject.getName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("发生日期为：yyyy年MM月dd日", Locale.CHINA);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         startDateButton.setText(dateFormat.format(mProject.getStartTime()));
         endDateButton.setText(dateFormat.format(mProject.getEndTime()));
-        dateFormat.applyPattern("发生时间为：kk:mm");
+        dateFormat.applyPattern("kk:mm");
         startTimeButton.setText(dateFormat.format(mProject.getStartTime()));
-        endDateButton.setText(dateFormat.format(mProject.getEndTime()));
+        endTimeButton.setText(dateFormat.format(mProject.getEndTime()));
 
     }
     public static ProjectFragment newInstance(Integer projectId) {

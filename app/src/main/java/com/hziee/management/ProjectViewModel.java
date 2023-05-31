@@ -1,6 +1,7 @@
 package com.hziee.management;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
@@ -12,12 +13,18 @@ import com.hziee.management.data.ProjectRepository;
 import com.hziee.management.entity.Project;
 // 显示工程的详细页面
 public class ProjectViewModel extends ViewModel {
+    private static final String TAG = "ProjectViewModel";
     private ProjectRepository projectRepository;
     private MutableLiveData<Integer> projectIdLiveData;
     private LiveData<Project> projectLiveData;
 
+    public ProjectViewModel(){
+        this.projectIdLiveData = new MutableLiveData<>();
+    }
+
     public LiveData<Project> loadProject(Integer projectId){
         //TODO database
+        Log.d(TAG,"loadProject: "+projectId);
         projectRepository= ProjectRepository.getInstance();
         projectLiveData = Transformations.switchMap(projectIdLiveData,
                 new Function<Integer, LiveData<Project>>() {
@@ -26,6 +33,7 @@ public class ProjectViewModel extends ViewModel {
                         return projectRepository.getProject(projectId);
                     }
                 });
+
         projectIdLiveData.setValue(projectId);
         return projectLiveData;
     }

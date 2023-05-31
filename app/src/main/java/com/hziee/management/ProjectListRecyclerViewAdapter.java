@@ -24,11 +24,16 @@ public class ProjectListRecyclerViewAdapter extends RecyclerView.Adapter<Project
 
     private final List<Project> projects;
     private Activity activity;
+    private Callbacks callbacks;
     public ProjectListRecyclerViewAdapter(List<Project> items,Activity activity) {
-        projects = items;
+        this.projects = items;
         this.activity = activity;
     }
-
+    public ProjectListRecyclerViewAdapter(List<Project> items,Activity activity,Callbacks callbacks) {
+        this.projects = items;
+        this.activity = activity;
+        this.callbacks=callbacks;
+    }
     @Override
     public ProjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(activity);
@@ -81,8 +86,9 @@ public class ProjectListRecyclerViewAdapter extends RecyclerView.Adapter<Project
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(itemView.getContext(),
-                    project.getName()+"被点击！",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(itemView.getContext(),
+//                    project.getName()+"被点击！",Toast.LENGTH_SHORT).show();
+            callbacks.onItemSelected(project.getId());
         }
     }
 }
