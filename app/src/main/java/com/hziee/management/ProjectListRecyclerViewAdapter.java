@@ -1,5 +1,8 @@
 package com.hziee.management;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
@@ -23,20 +26,17 @@ import java.util.Locale;
 public class ProjectListRecyclerViewAdapter extends RecyclerView.Adapter<ProjectListRecyclerViewAdapter.ProjectHolder> {
 
     private final List<Project> projects;
-    private Activity activity;
+
     private Callbacks callbacks;
-    public ProjectListRecyclerViewAdapter(List<Project> items,Activity activity) {
+
+    public ProjectListRecyclerViewAdapter(List<Project> items,Callbacks callbacks) {
         this.projects = items;
-        this.activity = activity;
-    }
-    public ProjectListRecyclerViewAdapter(List<Project> items,Activity activity,Callbacks callbacks) {
-        this.projects = items;
-        this.activity = activity;
         this.callbacks=callbacks;
     }
+    @NonNull
     @Override
     public ProjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(activity);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         return new ProjectHolder(inflater,parent);
 
     }
@@ -47,7 +47,7 @@ public class ProjectListRecyclerViewAdapter extends RecyclerView.Adapter<Project
         Project project = projects.get(position);
         holder.project = project;
         holder.projectTitleView.setText(project.getName());
-        count = project.getMembersCount()==null ? "0":project.getMembersCount().toString();
+        count = project.getMembersCount()==null ? "0": project.getMembersCount().toString();
         holder.membersCountView.setText(count);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日 kk:mm", Locale.CHINA);
         holder.startTimeView.setText(dateFormat.format(project.getStartTime()));
@@ -92,4 +92,5 @@ public class ProjectListRecyclerViewAdapter extends RecyclerView.Adapter<Project
             callbacks.onItemSelected(project.getId());
         }
     }
+
 }

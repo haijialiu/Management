@@ -1,4 +1,4 @@
-package com.hziee.management.database;
+package com.hziee.management.data;
 
 import androidx.room.TypeConverter;
 

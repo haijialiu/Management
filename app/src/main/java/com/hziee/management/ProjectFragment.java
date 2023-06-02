@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.hziee.management.entity.Project;
 
@@ -39,8 +40,8 @@ public class ProjectFragment extends Fragment {
         Integer projectId = (Integer) getArguments().getSerializable(ARG_PROJECT_ID);
         Log.d(TAG,"传递过来的工程记录ID为："+projectId.toString());
 
-        projectViewModel = new ViewModelProvider(this,
-                ViewModelProvider.AndroidViewModelFactory
+        projectViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
+                (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
                         .getInstance(getActivity().getApplication()))
                 .get(ProjectViewModel.class);
         projectLiveData = projectViewModel.loadProject(projectId);

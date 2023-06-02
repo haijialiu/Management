@@ -20,7 +20,32 @@
         android:label="ProjectFragment"
         tools:layout="@layout/fragment_project">
         <argument
-            android:name="product_id"
+            android:name="project_id"
             app:argType="integer" />
+        <action
+            android:id="@+id/navigate_to_task_list"
+            app:destination="@+id/taskListFragment"/>
     </fragment>
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="com.hziee.management.TaskListFragment"
+        android:label="fragment_task_list"
+        tools:layout="@layout/fragment_task_list" >
+        <argument
+            android:name="project_id"
+            app:argType="integer"/>
+        <action
+            android:id="@+id/navigate_to_task_detail"
+            app:destination="@+id/taskFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.hziee.management.TaskListFragment"
+        android:label="TaskFragment"
+        tools:layout="@layout/fragment_task">
+        <argument
+            android:name="task_id"
+            app:argType="integer"/>
+    </fragment>
+
 </navigation>

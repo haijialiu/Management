@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  */
-public class ProjectListFragment extends Fragment {
+public class ProjectListFragment extends Fragment implements Callbacks{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -33,7 +34,11 @@ public class ProjectListFragment extends Fragment {
     private ProjectListViewModel projectListViewModel;
     private ProjectListRecyclerViewAdapter projectAdapter;
     private RecyclerView projectRecyclerView;
-    private Callbacks mCallbacks = null;
+    private Callbacks mCallbacks = projectId -> {
+        com.hziee.management.ProjectListFragmentDirections.NavigateToProductDetail
+                directions = ProjectListFragmentDirections.navigateToProductDetail(projectId);
+        NavHostFragment.findNavController(this).navigate(directions);
+    };
     private int mColumnCount = 1;
 
     /**
@@ -56,18 +61,19 @@ public class ProjectListFragment extends Fragment {
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        mCallbacks = (Callbacks) context;
+        //mCallbacks = (Callbacks) context;
+
     }
     @Override
     public void onDetach(){
         super.onDetach();
-        mCallbacks = null;
+        //mCallbacks = null;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        projectListViewModel = new ViewModelProvider(this,ViewModelProvider
+        projectListViewModel = new ViewModelProvider((ViewModelStoreOwner) this, (ViewModelProvider.Factory) ViewModelProvider
                 .AndroidViewModelFactory.getInstance(getActivity().getApplication()))
                 .get(ProjectListViewModel.class);
         projectListViewModel.initDatabase(ProjectRepository.getInstance());
@@ -94,9 +100,8 @@ public class ProjectListFragment extends Fragment {
                 getViewLifecycleOwner(), new Observer<List<Project>>() {
                     @Override
                     public void onChanged(List<Project> projects) {
-                        Log.i(TAG,"得到的projects数为："+projects.size());
-                        projectAdapter = new ProjectListRecyclerViewAdapter(projects,getActivity(),mCallbacks);
-
+                        projectAdapter = new ProjectListRecyclerViewAdapter(projects,mCallbacks);
+                        projectRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         projectRecyclerView.setAdapter(projectAdapter);
                     }
                 }
@@ -105,5 +110,13 @@ public class ProjectListFragment extends Fragment {
 
     public static ProjectListFragment newInstance(){
         return new ProjectListFragment();
+    }
+
+    @Override
+    public void onItemSelected(Integer projectId) {
+        com.hziee.management.ProjectListFragmentDirections
+                .NavigateToProductDetail directions =
+                ProjectListFragmentDirections.navigateToProductDetail(projectId);
+        NavHostFragment.findNavController(this).navigate(directions);
     }
 }

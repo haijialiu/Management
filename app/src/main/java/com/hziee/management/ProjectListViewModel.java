@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.hziee.management.data.ProjectRepository;
-import com.hziee.management.database.ManagementDatabase;
 import com.hziee.management.entity.Project;
 
 import java.util.List;

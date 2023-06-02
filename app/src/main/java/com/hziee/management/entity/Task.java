@@ -1,7 +1,9 @@
 package com.hziee.management.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
@@ -11,6 +13,9 @@ public class Task {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "task_id")
     private Integer id;
+
+    @ColumnInfo(name = "project_id")
+    private Integer projectId;
     private String name;
     private String commit;
     @ColumnInfo(name = "start_time")
@@ -21,8 +26,20 @@ public class Task {
     @ColumnInfo(name = "created_time")
     private Date createdTime;
 
-    public Task(Integer id, String name, String commit, Date startTime, Date endTime, String header, Date createdTime) {
+    @Ignore
+    public Task(String name){
+        this.name = name;
+        this.projectId = 1;
+        this.commit = "task commit";
+        this.header = "root";
+        this.startTime = new Date();
+        this.endTime = new Date();
+        this.createdTime = new Date();
+    }
+
+    public Task(Integer id, Integer projectId, String name, String commit, Date startTime, Date endTime, String header, Date createdTime) {
         this.id = id;
+        this.projectId = projectId;
         this.name = name;
         this.commit = commit;
         this.startTime = startTime;
@@ -87,10 +104,20 @@ public class Task {
         this.createdTime = createdTime;
     }
 
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
+    @NonNull
     @Override
     public String toString() {
         return "Task{" +
                 "id=" + id +
+                ", projectId=" + projectId +
                 ", name='" + name + '\'' +
                 ", commit='" + commit + '\'' +
                 ", startTime=" + startTime +

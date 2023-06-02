@@ -1,11 +1,9 @@
 package com.hziee.management.data;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import com.hziee.management.dao.UserDao;
-import com.hziee.management.database.ManagementDatabase;
 import com.hziee.management.entity.User;
 
 import java.util.List;
