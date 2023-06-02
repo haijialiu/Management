@@ -21,7 +21,7 @@
         tools:layout="@layout/fragment_project">
         <argument
             android:name="project_id"
-            app:argType="integer" />
+            app:argType="integer"/>
         <action
             android:id="@+id/navigate_to_task_list"
             app:destination="@+id/taskListFragment"/>
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/taskFragment"
-        android:name="com.hziee.management.TaskListFragment"
+        android:name="com.hziee.management.TaskFragment"
         android:label="TaskFragment"
         tools:layout="@layout/fragment_task">
         <argument

@@ -1,6 +1,5 @@
 package com.hziee.management;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -12,7 +11,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,11 +32,13 @@ public class ProjectListFragment extends Fragment implements Callbacks{
     private ProjectListViewModel projectListViewModel;
     private ProjectListRecyclerViewAdapter projectAdapter;
     private RecyclerView projectRecyclerView;
-    private Callbacks mCallbacks = projectId -> {
+    private final Callbacks mCallbacks = projectId -> {
         com.hziee.management.ProjectListFragmentDirections.NavigateToProductDetail
                 directions = ProjectListFragmentDirections.navigateToProductDetail(projectId);
         NavHostFragment.findNavController(this).navigate(directions);
     };
+
+
     private int mColumnCount = 1;
 
     /**
@@ -96,7 +96,7 @@ public class ProjectListFragment extends Fragment implements Callbacks{
     }
 
     private void updateUI() {
-        projectListViewModel.getCrimes(ProjectRepository.getInstance()).observe(
+        projectListViewModel.getProjects().observe(
                 getViewLifecycleOwner(), new Observer<List<Project>>() {
                     @Override
                     public void onChanged(List<Project> projects) {

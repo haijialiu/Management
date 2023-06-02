@@ -65,9 +65,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/view_tasks"/>
-    <Button
-        android:id="@+id/add_task"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_task"/>
+
 </LinearLayout>

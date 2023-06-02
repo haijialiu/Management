@@ -20,20 +20,14 @@ public class ProjectViewModel extends ViewModel {
 
     public ProjectViewModel(){
         this.projectIdLiveData = new MutableLiveData<>();
+        projectRepository = ProjectRepository.getInstance();
     }
 
     public LiveData<Project> loadProject(Integer projectId){
-        //TODO database
-        Log.d(TAG,"loadProject: "+projectId);
-        projectRepository= ProjectRepository.getInstance();
-        projectLiveData = Transformations.switchMap(projectIdLiveData,
-                new Function<Integer, LiveData<Project>>() {
-                    @Override
-                    public LiveData<Project> apply(Integer input) {
-                        return projectRepository.getProject(projectId);
-                    }
-                });
 
+        //projectRepository = ProjectRepository.getInstance();
+        projectLiveData = Transformations.switchMap(projectIdLiveData,
+                input -> projectRepository.getProject(projectId));
         projectIdLiveData.setValue(projectId);
         return projectLiveData;
     }

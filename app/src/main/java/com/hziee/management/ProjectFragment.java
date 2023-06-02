@@ -1,6 +1,8 @@
 package com.hziee.management;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.hziee.management.entity.Project;
 
@@ -24,7 +27,7 @@ public class ProjectFragment extends Fragment {
     private static final String TAG = "ProjectFragment";
 
     private Project mProject;
-    ProjectViewModel projectViewModel;
+    private ProjectViewModel projectViewModel;
     private LiveData<Project> projectLiveData;
     private EditText projectTitleEditText;
     private Button startDateButton;
@@ -32,7 +35,14 @@ public class ProjectFragment extends Fragment {
     private Button endDateButton;
     private Button endTimeButton;
     private Button viewTasksButton;
-    private Button addTaskButton;
+
+
+    private Callbacks callbacks = projectId -> {
+
+        com.hziee.management.ProjectFragmentDirections.NavigateToTaskList directions
+                = ProjectFragmentDirections.navigateToTaskList(projectId);
+        NavHostFragment.findNavController(this).navigate(directions);
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +66,6 @@ public class ProjectFragment extends Fragment {
         endDateButton = v.findViewById(R.id.project_end_date);
         endTimeButton = v.findViewById(R.id.project_end_time);
         viewTasksButton = v.findViewById(R.id.view_tasks);
-        addTaskButton = v.findViewById(R.id.add_task);
-
 
         return v;
     }
@@ -72,17 +80,40 @@ public class ProjectFragment extends Fragment {
                 updateUI();
             }
         });
+
     }
     @Override
     public void onStart() {
         super.onStart();
-
-        viewTasksButton.setOnClickListener(new View.OnClickListener() {
+        projectTitleEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mProject.setName(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
 
             }
         });
+        viewTasksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"传递projectId: "+mProject.getId());
+                //TaskListFragmentDirections.navigateToTaskDetail()
+                callbacks.onItemSelected(mProject.getId());
+            }
+        });
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        projectViewModel.saveProject(mProject);
     }
     private void updateUI() {
         projectTitleEditText.setText(mProject.getName());

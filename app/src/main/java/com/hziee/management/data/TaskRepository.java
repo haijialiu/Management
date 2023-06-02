@@ -27,6 +27,9 @@ public class TaskRepository {
     public LiveData<List<Task>> getTasksByProjectId(Integer projectId){
         return taskDao.getTaskByProjectId(projectId);
     }
+    public LiveData<Task> getTaskById(Integer taskId){
+        return taskDao.getTask(taskId);
+    }
     public void updateTask(Task task){
         ManagementDatabase.databaseWriteExecutor.execute(()->{
             taskDao.updateProject(task);

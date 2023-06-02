@@ -72,10 +72,10 @@ public class ProjectListRecyclerViewAdapter extends RecyclerView.Adapter<Project
         public ProjectHolder(LayoutInflater inflater,ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_project,parent,false));
 
-            projectTitleView = itemView.findViewById(R.id.project_title);
-            startTimeView = itemView.findViewById(R.id.start_time);
-            endTimeView = itemView.findViewById(R.id.end_time);
-            membersCountView = itemView.findViewById(R.id.project_count);
+            projectTitleView = itemView.findViewById(R.id.list_project_title);
+            startTimeView = itemView.findViewById(R.id.list_project_start_time);
+            endTimeView = itemView.findViewById(R.id.list_project_end_time);
+            membersCountView = itemView.findViewById(R.id.list_project_count);
             itemView.setOnClickListener(this);
         }
 
