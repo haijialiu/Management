@@ -40,6 +40,7 @@ public class ProjectFragment extends Fragment {
     private static final String TAG = "ProjectFragment";
     private Project mProject;
     private ProjectViewModel projectViewModel;
+
     private LiveData<Project> projectLiveData;
     private EditText projectTitleEditText;
     private Button startDateButton;
@@ -47,6 +48,7 @@ public class ProjectFragment extends Fragment {
     private Button endDateButton;
     private Button endTimeButton;
     private Button viewTasksButton;
+    private Button deleteButton;
 
     private enum TimeType{
         START_DATE,START_TIME,END_DATE,END_TIME;
@@ -64,12 +66,9 @@ public class ProjectFragment extends Fragment {
         Integer projectId = (Integer) getArguments().getSerializable(ARG_PROJECT_ID);
         Log.d(TAG,"传递过来的工程记录ID为："+projectId.toString());
 
-        projectViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
-                (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory
-                        .getInstance(getActivity().getApplication()))
+        projectViewModel = new ViewModelProvider(this)
                 .get(ProjectViewModel.class);
         projectLiveData = projectViewModel.loadProject(projectId);
-
 
     }
     @Override
@@ -82,6 +81,7 @@ public class ProjectFragment extends Fragment {
         endDateButton = v.findViewById(R.id.project_end_date);
         endTimeButton = v.findViewById(R.id.project_end_time);
         viewTasksButton = v.findViewById(R.id.view_tasks);
+        deleteButton = v.findViewById(R.id.delete_project);
 
         return v;
     }
@@ -101,7 +101,15 @@ public class ProjectFragment extends Fragment {
     }
     @Override
     public void onStart() {
+
         super.onStart();
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                projectViewModel.deleteProject(mProject.getId());
+                getActivity().onBackPressed();
+            }
+        });
         projectTitleEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -178,7 +186,8 @@ public class ProjectFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        projectViewModel.saveProject(mProject);
+        if(mProject!=null)
+            projectViewModel.saveProject(mProject);
     }
     private void updateUI() {
         if(mProject!=null) {

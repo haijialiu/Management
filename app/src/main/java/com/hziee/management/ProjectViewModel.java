@@ -21,8 +21,6 @@ public class ProjectViewModel extends ViewModel {
     private MutableLiveData<Integer> projectIdLiveData;
     private LiveData<Project> projectLiveData;
 
-    private Date projectStartPickTime;
-    private Date projectEndPickTime;
 
 
     public ProjectViewModel(){
@@ -40,21 +38,10 @@ public class ProjectViewModel extends ViewModel {
         return projectLiveData;
     }
 
-    public Date getProjectStartPickTime() {
-        return projectStartPickTime;
+    public void deleteProject(Integer projectId){
+        projectRepository.deleteProject(projectId);
     }
 
-    public void setProjectStartPickTime(Date projectStartPickTime) {
-        this.projectStartPickTime = projectStartPickTime;
-    }
-
-    public Date getProjectEndPickTime() {
-        return projectEndPickTime;
-    }
-
-    public void setProjectEndPickTime(Date projectEndPickTime) {
-        this.projectEndPickTime = projectEndPickTime;
-    }
 
     public void saveProject(Project project){
         projectRepository.updateProject(project);

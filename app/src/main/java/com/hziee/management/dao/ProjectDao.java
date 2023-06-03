@@ -13,10 +13,14 @@ import java.util.List;
 public interface ProjectDao {
     @Query("SELECT * FROM project")
     LiveData<List<Project>> getAll();
+    @Query("SELECT * FROM project WHERE (:condition) = (:value)")
+    LiveData<List<Project>> getByCondition(String condition,String value);
     @Query("SELECT * FROM project WHERE project_id=(:id)")
     LiveData<Project> getProject(Integer id);
     @Query("DELETE FROM project")
     void deleteAll();
+    @Query("DELETE FROM project WHERE project_id=(:id)")
+    void deleteProject(Integer id);
     @Insert
     long insert(Project project);
     @Update

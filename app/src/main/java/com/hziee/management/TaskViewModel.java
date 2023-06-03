@@ -29,4 +29,5 @@ public class TaskViewModel extends ViewModel {
     public void saveTask(Task task){
         taskRepository.updateTask(task);
     }
+    public void deleteTask(Integer taskId){taskRepository.deleteTask(taskId);}
 }

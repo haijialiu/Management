@@ -128,6 +128,11 @@ public class ProjectListFragment extends Fragment implements Callbacks{
         updateUI();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
 
     private void updateUI() {
         projectListViewModel.getProjects().observe(
@@ -141,7 +146,18 @@ public class ProjectListFragment extends Fragment implements Callbacks{
                 }
         );
     }
-
+    private void updateUI(String condition,String value) {
+        projectListViewModel.getProjects(condition, value).observe(
+                getViewLifecycleOwner(), new Observer<List<Project>>() {
+                    @Override
+                    public void onChanged(List<Project> projects) {
+                        projectAdapter = new ProjectListRecyclerViewAdapter(projects,mCallbacks);
+                        projectRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        projectRecyclerView.setAdapter(projectAdapter);
+                    }
+                }
+        );
+    }
     public static ProjectListFragment newInstance(){
         return new ProjectListFragment();
     }

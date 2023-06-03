@@ -33,6 +33,9 @@ public class ProjectRepository {
     public LiveData<List<Project>> getProjects(){
         return projectDao.getAll();
     }
+    public LiveData<List<Project>> getProjects(String condition,String value){
+        return projectDao.getByCondition(condition,value);
+    }
     public LiveData<Project> getProject(Integer id){
         return projectDao.getProject(id);
     }
@@ -40,6 +43,9 @@ public class ProjectRepository {
     public void updateProject(Project project){
         ManagementDatabase.databaseWriteExecutor.execute(() -> projectDao.updateProject(project));
 
+    }
+    public void deleteProject(Integer projectId){
+        ManagementDatabase.databaseWriteExecutor.execute(() -> projectDao.deleteProject(projectId));
     }
     public long addProject(Project project){
         Callable<Long> insertCallable = () -> projectDao.addProject(project);

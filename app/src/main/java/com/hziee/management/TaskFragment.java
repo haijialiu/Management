@@ -45,6 +45,7 @@ public class TaskFragment extends Fragment {
     private Button startTimeButton;
     private Button endDateButton;
     private Button endTimeButton;
+    private Button deleteButton;
 
     private enum TimeType{
         START_DATE,START_TIME,END_DATE,END_TIME;
@@ -73,6 +74,7 @@ public class TaskFragment extends Fragment {
         startTimeButton = v.findViewById(R.id.task_start_time);
         endDateButton = v.findViewById(R.id.task_end_date);
         endTimeButton = v.findViewById(R.id.task_end_time);
+        deleteButton = v.findViewById(R.id.delete_task);
         return v;
     }
     @Override
@@ -90,6 +92,13 @@ public class TaskFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                taskViewModel.deleteTask(mTask.getId());
+                getActivity().onBackPressed();
+            }
+        });
         taskTitleEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -190,7 +199,8 @@ public class TaskFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        taskViewModel.saveTask(mTask);
+        if(mTask!=null)
+            taskViewModel.saveTask(mTask);
     }
 
     private void updateUI() {

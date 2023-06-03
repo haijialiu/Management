@@ -19,8 +19,12 @@ public class ProjectListViewModel extends ViewModel {
     public LiveData<List<Project>> getProjects() {
         projectListLiveData = projectRepository.getProjects();
         return projectListLiveData;
-
     }
+    public LiveData<List<Project>> getProjects(String condition,String value) {
+        projectListLiveData = projectRepository.getProjects(condition, value);
+        return projectListLiveData;
+    }
+
     public long addProject(Project project){
         return projectRepository.addProject(project);
     }

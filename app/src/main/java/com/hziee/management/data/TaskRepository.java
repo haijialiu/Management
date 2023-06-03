@@ -38,6 +38,11 @@ public class TaskRepository {
             taskDao.updateProject(task);
         });
     }
+    public void deleteTask(Integer taskId){
+        ManagementDatabase.databaseWriteExecutor.execute(()->{
+            taskDao.deleteTask(taskId);
+        });
+    }
     public long addTask(Task task){
         Callable<Long> insertCallable = () -> taskDao.insert(task);
         Future<Long> submit = ManagementDatabase.databaseWriteExecutor.submit(insertCallable);

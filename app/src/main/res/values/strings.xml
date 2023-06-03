@@ -20,5 +20,6 @@
 
     <string name="new_project">新项目</string>
     <string name="new_task">新任务</string>
+    <string name="delete_label">删除</string>
 
 </resources>
