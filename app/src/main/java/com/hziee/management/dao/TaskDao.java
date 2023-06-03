@@ -26,9 +26,9 @@ public interface TaskDao {
     @Query("DELETE FROM task")
     void deleteAll();
     @Insert
-    void insert(Task task);
+    long insert(Task task);
     @Update
     void updateProject(Task task);
     @Insert
-    void addProject(Task task);
+    long addProject(Task task);
 }

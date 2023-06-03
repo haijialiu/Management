@@ -22,6 +22,14 @@ public class Project {
     @ColumnInfo(name = "created_time")
     private Date createdTime;
     @Ignore
+    public Project(){
+        this.name = "";
+        this.membersCount=0;
+        this.startTime = new Date();
+        this.endTime = new Date();
+        this.createdTime = new Date();
+    }
+    @Ignore
     public Project(String name){
         this.name=name;
         this.membersCount=0;

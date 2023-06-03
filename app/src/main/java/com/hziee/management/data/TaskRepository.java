@@ -8,6 +8,9 @@ import com.hziee.management.dao.TaskDao;
 import com.hziee.management.entity.Task;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class TaskRepository {
     private static volatile TaskRepository instance;
@@ -35,10 +38,15 @@ public class TaskRepository {
             taskDao.updateProject(task);
         });
     }
-    public void addTask(Task task){
-        ManagementDatabase.databaseWriteExecutor.execute(()->{
-            taskDao.insert(task);
-        });
+    public long addTask(Task task){
+        Callable<Long> insertCallable = () -> taskDao.insert(task);
+        Future<Long> submit = ManagementDatabase.databaseWriteExecutor.submit(insertCallable);
+        try {
+            return submit.get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
     public static TaskRepository getInstance(){
         return instance;

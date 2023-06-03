@@ -8,10 +8,15 @@ import com.hziee.management.dao.ProjectDao;
 import com.hziee.management.entity.Project;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class ProjectRepository {
     private static volatile ProjectRepository instance;
     private ProjectDao projectDao;
+
 
 
     public static void Initialize(Application application){
@@ -36,13 +41,14 @@ public class ProjectRepository {
         ManagementDatabase.databaseWriteExecutor.execute(() -> projectDao.updateProject(project));
 
     }
-    public void addProject(Project project){
-        ManagementDatabase.databaseWriteExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                projectDao.addProject(project);
-            }
-        });
+    public long addProject(Project project){
+        Callable<Long> insertCallable = () -> projectDao.addProject(project);
+        Future<Long> submit = ManagementDatabase.databaseWriteExecutor.submit(insertCallable);
+        try {
+            return submit.get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

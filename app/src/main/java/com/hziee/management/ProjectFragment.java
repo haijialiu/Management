@@ -53,7 +53,7 @@ public class ProjectFragment extends Fragment {
     }
 
     private Callbacks callbacks = projectId -> {
-        com.hziee.management.ProjectFragmentDirections.NavigateToTaskList directions
+        ProjectFragmentDirections.NavigateToTaskList directions
                 = ProjectFragmentDirections.navigateToTaskList(projectId);
         NavHostFragment.findNavController(this).navigate(directions);
     };
@@ -181,13 +181,15 @@ public class ProjectFragment extends Fragment {
         projectViewModel.saveProject(mProject);
     }
     private void updateUI() {
-        projectTitleEditText.setText(mProject.getName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
-        startDateButton.setText(dateFormat.format(mProject.getStartTime()));
-        endDateButton.setText(dateFormat.format(mProject.getEndTime()));
-        dateFormat.applyPattern("kk:mm");
-        startTimeButton.setText(dateFormat.format(mProject.getStartTime()));
-        endTimeButton.setText(dateFormat.format(mProject.getEndTime()));
+        if(mProject!=null) {
+            projectTitleEditText.setText(mProject.getName());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
+            startDateButton.setText(dateFormat.format(mProject.getStartTime()));
+            endDateButton.setText(dateFormat.format(mProject.getEndTime()));
+            dateFormat.applyPattern("kk:mm");
+            startTimeButton.setText(dateFormat.format(mProject.getStartTime()));
+            endTimeButton.setText(dateFormat.format(mProject.getEndTime()));
+        }
 
     }
     public static ProjectFragment newInstance(Integer projectId) {

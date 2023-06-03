@@ -3,15 +3,23 @@ package com.hziee.management;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewbinding.ViewBinding;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -58,6 +66,8 @@ public class ProjectListFragment extends Fragment implements Callbacks{
         return fragment;
     }
 
+
+
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -73,6 +83,8 @@ public class ProjectListFragment extends Fragment implements Callbacks{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         projectListViewModel = new ViewModelProvider((ViewModelStoreOwner) this, (ViewModelProvider.Factory) ViewModelProvider
                 .AndroidViewModelFactory.getInstance(getActivity().getApplication()))
                 .get(ProjectListViewModel.class);
@@ -86,6 +98,27 @@ public class ProjectListFragment extends Fragment implements Callbacks{
         View view = inflater.inflate(R.layout.fragment_project_list, container, false);
         projectRecyclerView  = view.findViewById(R.id.project_recycler_view);
         projectRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.fragment_project_list,menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.new_project:
+                        Project project = new Project();
+                        long pk = projectListViewModel.addProject(project);
+
+                        mCallbacks.onItemSelected(Long.valueOf(pk).intValue());
+
+                }
+                return false;
+            }
+        },getViewLifecycleOwner(), Lifecycle.State.RESUMED);
         return view;
     }
     @Override
@@ -94,6 +127,7 @@ public class ProjectListFragment extends Fragment implements Callbacks{
 
         updateUI();
     }
+
 
     private void updateUI() {
         projectListViewModel.getProjects().observe(

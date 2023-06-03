@@ -3,7 +3,11 @@ package com.hziee.management;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -13,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -83,6 +90,24 @@ public class TaskListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
         taskRecyclerView  = view.findViewById(R.id.task_recycler_view);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.fragment_task_list,menu);
+            }
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.new_task:
+                        Task task = new Task(projectId);
+                        long pk = taskListViewModel.addTask(task);
+                        mCallbacks.onItemSelected(Long.valueOf(pk).intValue());
+                }
+                return false;
+            }
+        },getViewLifecycleOwner(), Lifecycle.State.RESUMED);
         return view;
     }
     @Override

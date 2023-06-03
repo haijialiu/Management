@@ -18,10 +18,10 @@ public interface ProjectDao {
     @Query("DELETE FROM project")
     void deleteAll();
     @Insert
-    void insert(Project project);
+    long insert(Project project);
     @Update
     void updateProject(Project project);
     @Insert
-    void addProject(Project project);
+    long addProject(Project project);
 
 }

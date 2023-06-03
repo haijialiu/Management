@@ -16,15 +16,12 @@ public class ProjectListViewModel extends ViewModel {
         this.projectRepository = projectRepository;
     }
 
-    public LiveData<List<Project>> getProjects(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-        projectListLiveData = projectRepository.getProjects();
-        return projectListLiveData;
-
-    }
     public LiveData<List<Project>> getProjects() {
         projectListLiveData = projectRepository.getProjects();
         return projectListLiveData;
 
+    }
+    public long addProject(Project project){
+        return projectRepository.addProject(project);
     }
 }

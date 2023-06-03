@@ -25,7 +25,14 @@ public class Task {
     private String header;
     @ColumnInfo(name = "created_time")
     private Date createdTime;
-
+    @Ignore
+    public Task(Integer projectId){
+        this.name = "";
+        this.projectId = projectId;
+        this.startTime = new Date();
+        this.endTime = new Date();
+        this.createdTime = new Date();
+    }
     @Ignore
     public Task(String name){
         this.name = name;
