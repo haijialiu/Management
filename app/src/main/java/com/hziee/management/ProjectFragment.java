@@ -1,5 +1,6 @@
 package com.hziee.management;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,23 +10,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavController;
+import androidx.navigation.NavHostController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.hziee.management.entity.Project;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class ProjectFragment extends Fragment {
     private static final String ARG_PROJECT_ID = "project_id";
     private static final String TAG = "ProjectFragment";
-
     private Project mProject;
     private ProjectViewModel projectViewModel;
     private LiveData<Project> projectLiveData;
@@ -36,9 +48,11 @@ public class ProjectFragment extends Fragment {
     private Button endTimeButton;
     private Button viewTasksButton;
 
+    private enum TimeType{
+        START_DATE,START_TIME,END_DATE,END_TIME;
+    }
 
     private Callbacks callbacks = projectId -> {
-
         com.hziee.management.ProjectFragmentDirections.NavigateToTaskList directions
                 = ProjectFragmentDirections.navigateToTaskList(projectId);
         NavHostFragment.findNavController(this).navigate(directions);
@@ -55,6 +69,8 @@ public class ProjectFragment extends Fragment {
                         .getInstance(getActivity().getApplication()))
                 .get(ProjectViewModel.class);
         projectLiveData = projectViewModel.loadProject(projectId);
+
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +96,7 @@ public class ProjectFragment extends Fragment {
                 updateUI();
             }
         });
+
 
     }
     @Override
@@ -109,6 +126,54 @@ public class ProjectFragment extends Fragment {
                 callbacks.onItemSelected(mProject.getId());
             }
         });
+        startTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date startTime = mProject.getStartTime();
+                NavController navController = Navigation.findNavController(v);
+                ProjectFragmentDirections.NavigateToTimePick directions =
+                        ProjectFragmentDirections.navigateToTimePick(startTime.getTime());
+                navController.navigate(directions);
+                observeDialogResult(TimeType.START_TIME);
+            }
+        });
+        endTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date endTime = mProject.getEndTime();
+                NavController navController = Navigation.findNavController(v);
+                ProjectFragmentDirections.NavigateToTimePick directions =
+                        ProjectFragmentDirections.navigateToTimePick(endTime.getTime());
+                navController.navigate(directions);
+
+                observeDialogResult(TimeType.END_TIME);
+            }
+        });
+        startDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Date startDate = mProject.getStartTime();
+                NavController navController = Navigation.findNavController(v);
+                ProjectFragmentDirections.NavigateToDatePick directions =
+                        ProjectFragmentDirections.navigateToDatePick(startDate.getTime());
+                navController.navigate(directions);
+
+                observeDialogResult(TimeType.START_DATE);
+            }
+        });
+        endDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date endDate = mProject.getEndTime();
+                NavController navController = Navigation.findNavController(v);
+                ProjectFragmentDirections.NavigateToDatePick directions =
+                        ProjectFragmentDirections.navigateToDatePick(endDate.getTime());
+                navController.navigate(directions);
+                observeDialogResult(TimeType.END_DATE);
+            }
+        });
+
     }
     @Override
     public void onStop() {
@@ -133,4 +198,81 @@ public class ProjectFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+
+
+    private void observeDialogResult(TimeType timeType){
+        NavController navController = NavHostFragment.findNavController(this);
+//        final NavBackStackEntry navBackStackEntry = navController.getBackStackEntry(R.id.projectFragment);
+        final NavBackStackEntry navBackStackEntry = navController.getBackStackEntry(R.id.projectFragment);
+        final LifecycleEventObserver observer = new LifecycleEventObserver() {
+            @Override
+            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                if (event.equals(Lifecycle.Event.ON_RESUME)) {
+//                    Calendar calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("time");
+                    Calendar calendar;
+                    // 处理监听到的数据
+                    Calendar updateCalendar = Calendar.getInstance();
+                    switch (timeType){
+                        case START_TIME:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("time");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mProject.getStartTime());
+                            updateCalendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+                            updateCalendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+                            mProject.setStartTime(updateCalendar.getTime());
+                            break;
+                        case START_DATE:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("date");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mProject.getStartTime());
+                            updateCalendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR));
+                            updateCalendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
+                            updateCalendar.set(Calendar.DATE, calendar.get(Calendar.DATE));
+                            mProject.setStartTime(updateCalendar.getTime());
+                            break;
+                        case END_TIME:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("time");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mProject.getEndTime());
+                            updateCalendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+                            updateCalendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+                            mProject.setEndTime(updateCalendar.getTime());
+                            break;
+                        case END_DATE:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("date");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mProject.getEndTime());
+                            updateCalendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR));
+                            updateCalendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
+                            updateCalendar.set(Calendar.DATE, calendar.get(Calendar.DATE));
+                            mProject.setEndTime(updateCalendar.getTime());
+                            break;
+                    }
+                    Log.d(TAG, updateCalendar.toString());
+                    navController.getCurrentBackStackEntry().getSavedStateHandle().remove("date");
+                    navController.getCurrentBackStackEntry().getSavedStateHandle().remove("time");
+                    updateUI();
+                    //如果不把自身移除会有奇怪的bug出现：此方法莫名其妙调用了多次并且把所有日期设置为同一个值
+                    navBackStackEntry.getLifecycle().removeObserver(this);
+                }
+            }
+        };
+
+        navBackStackEntry.getLifecycle().addObserver(observer);
+
+//        getViewLifecycleOwner().getLifecycle().addObserver(new LifecycleEventObserver() {
+//            @Override
+//            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+//                if (event.equals(Lifecycle.Event.ON_DESTROY)) {
+//                    navBackStackEntry.getLifecycle().removeObserver(observer);
+//                }
+//            }
+//        });
+    }
+
 }

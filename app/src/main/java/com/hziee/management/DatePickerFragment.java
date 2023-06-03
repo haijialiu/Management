@@ -3,45 +3,51 @@ package com.hziee.management;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.DatePicker;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class DatePickerFragment  extends DialogFragment {
-    private static final String ARG_DATE = "date";
+//https://developer.android.google.cn/guide/topics/ui/controls/pickers?hl=zh-cn
+public class DatePickerFragment  extends DialogFragment
+        implements DatePickerDialog.OnDateSetListener {
 
-    interface Callbacks{
-        public abstract void onDateSelected(Date date);
-    }
+    private static final String ARG_DATE = "date";
+    private static final String TAG = "DatePickerFragment";
+    private NavController navController;
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState){
-        DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                Date resultDate = new GregorianCalendar(i,i1,i2).getTime();
-                ((Callbacks)getTargetFragment()).onDateSelected(resultDate);
-            }
-        };
-        Calendar calendar = Calendar.getInstance();
-        //取出传过来的日期
-        Bundle argument = getArguments();
-        calendar.setTime((Date)argument.getSerializable(ARG_DATE));
-
-        int initYear = calendar.get(Calendar.YEAR);
-        int initMonth = calendar.get(Calendar.MONTH);
-        int initDay = calendar.get(Calendar.DAY_OF_MONTH);
-        return new DatePickerDialog(requireContext(),
-                listener,
-                initYear,
-                initMonth,
-                initDay);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Use the current date as the default date in the picker
+        final Calendar c = Calendar.getInstance();
+        long time = DatePickerFragmentArgs.fromBundle(getArguments()).getDate();
+        c.setTimeInMillis(time);
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        navController = NavHostFragment.findNavController(DatePickerFragment.this);
+        // Create a new instance of DatePickerDialog and return it
+        return new DatePickerDialog(getActivity(), this, year, month, day);
     }
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        // Do something with the date chosen by the user
+        Log.d(TAG, String.format("%d-%d-%d",year,month,day));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR,year);
+        calendar.set(Calendar.MONTH,month);
+        calendar.set(Calendar.DATE,day);
+        navController.getPreviousBackStackEntry().getSavedStateHandle()
+                .set("date", calendar);
 
+    }
     public static DatePickerFragment newInstance(Date date) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_DATE,date);
@@ -49,5 +55,4 @@ public class DatePickerFragment  extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
 }

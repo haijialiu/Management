@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/product_list_graph"
+    android:id="@+id/management_graph"
     app:startDestination="@id/project_list">
     <fragment
         android:id="@+id/project_list"
@@ -25,6 +25,12 @@
         <action
             android:id="@+id/navigate_to_task_list"
             app:destination="@+id/taskListFragment"/>
+        <action
+            android:id="@+id/navigate_to_time_pick"
+            app:destination="@+id/timePickerFragment"/>
+        <action
+            android:id="@+id/navigate_to_date_pick"
+            app:destination="@+id/datePickerFragment"/>
     </fragment>
     <fragment
         android:id="@+id/taskListFragment"
@@ -46,6 +52,30 @@
         <argument
             android:name="task_id"
             app:argType="integer"/>
+        <action
+            android:id="@+id/navigate_to_time_pick"
+            app:destination="@+id/timePickerFragment"/>
+        <action
+            android:id="@+id/navigate_to_date_pick"
+            app:destination="@+id/datePickerFragment"/>
     </fragment>
+
+    <dialog
+        android:id="@+id/timePickerFragment"
+        android:name="com.hziee.management.TimePickerFragment"
+        android:label="time_picker_fragment">
+        <argument
+            android:name="time"
+            app:argType="long"/>
+    </dialog>
+    <dialog
+        android:id="@+id/datePickerFragment"
+        android:name="com.hziee.management.DatePickerFragment"
+        android:label="date_picker_fragment">
+        <argument
+            android:name="date"
+            app:argType="long"/>
+    </dialog>
+
 
 </navigation>

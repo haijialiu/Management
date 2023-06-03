@@ -10,16 +10,25 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
-import com.hziee.management.entity.Project;
 import com.hziee.management.entity.Task;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class TaskFragment extends Fragment {
@@ -36,6 +45,11 @@ public class TaskFragment extends Fragment {
     private Button startTimeButton;
     private Button endDateButton;
     private Button endTimeButton;
+
+    private enum TimeType{
+        START_DATE,START_TIME,END_DATE,END_TIME;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +138,54 @@ public class TaskFragment extends Fragment {
 
             }
         });
+        startTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date startTime = mTask.getStartTime();
+                NavController navController = Navigation.findNavController(v);
+                TaskFragmentDirections.NavigateToTimePick directions =
+                        TaskFragmentDirections.navigateToTimePick(startTime.getTime());
+                navController.navigate(directions);
+                observeDialogResult(TimeType.START_TIME);
+            }
+        });
+        endTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date endTime =mTask.getEndTime();
+                NavController navController = Navigation.findNavController(v);
+                TaskFragmentDirections.NavigateToTimePick directions =
+                        TaskFragmentDirections.navigateToTimePick(endTime.getTime());
+                navController.navigate(directions);
+
+                observeDialogResult(TimeType.END_TIME);
+            }
+        });
+        startDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Date startDate = mTask.getStartTime();
+                NavController navController = Navigation.findNavController(v);
+                TaskFragmentDirections.NavigateToDatePick directions =
+                        TaskFragmentDirections.navigateToDatePick(startDate.getTime());
+                navController.navigate(directions);
+
+                observeDialogResult(TimeType.START_DATE);
+            }
+        });
+        endDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date endDate = mTask.getEndTime();
+                NavController navController = Navigation.findNavController(v);
+                TaskFragmentDirections.NavigateToDatePick directions =
+                        TaskFragmentDirections.navigateToDatePick(endDate.getTime());
+                navController.navigate(directions);
+                observeDialogResult(TimeType.END_DATE);
+            }
+        });
+
     }
     @Override
     public void onStop() {
@@ -149,5 +211,77 @@ public class TaskFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+    private void observeDialogResult(TimeType timeType){
+        NavController navController = NavHostFragment.findNavController(this);
+//        final NavBackStackEntry navBackStackEntry = navController.getBackStackEntry(R.id.projectFragment);
+        final NavBackStackEntry navBackStackEntry = navController.getBackStackEntry(R.id.taskFragment);
+        final LifecycleEventObserver observer = new LifecycleEventObserver() {
+            @Override
+            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                if (event.equals(Lifecycle.Event.ON_RESUME)) {
+//                    Calendar calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("time");
+                    Calendar calendar;
+                    // 处理监听到的数据
+                    Calendar updateCalendar = Calendar.getInstance();
+                    switch (timeType){
+                        case START_TIME:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("time");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mTask.getStartTime());
+                            updateCalendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+                            updateCalendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+                            mTask.setStartTime(updateCalendar.getTime());
+                            break;
+                        case START_DATE:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("date");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mTask.getStartTime());
+                            updateCalendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR));
+                            updateCalendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
+                            updateCalendar.set(Calendar.DATE, calendar.get(Calendar.DATE));
+                            mTask.setStartTime(updateCalendar.getTime());
+                            break;
+                        case END_TIME:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("time");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mTask.getEndTime());
+                            updateCalendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+                            updateCalendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+                            mTask.setEndTime(updateCalendar.getTime());
+                            break;
+                        case END_DATE:
+                            calendar = (Calendar)navBackStackEntry.getSavedStateHandle().get("date");
+                            if(calendar==null)
+                                return;
+                            updateCalendar.setTime(mTask.getEndTime());
+                            updateCalendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR));
+                            updateCalendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
+                            updateCalendar.set(Calendar.DATE, calendar.get(Calendar.DATE));
+                            mTask.setEndTime(updateCalendar.getTime());
+                            break;
+                    }
+                    Log.d(TAG, updateCalendar.toString());
+                    navController.getCurrentBackStackEntry().getSavedStateHandle().remove("date");
+                    navController.getCurrentBackStackEntry().getSavedStateHandle().remove("time");
+                    updateUI();
+                    //如果不把自身移除会有奇怪的bug出现：此方法莫名其妙调用了多次并且把所有日期设置为同一个值
+                    navBackStackEntry.getLifecycle().removeObserver(this);
+                }
+            }
+        };
 
+        navBackStackEntry.getLifecycle().addObserver(observer);
+
+//        getViewLifecycleOwner().getLifecycle().addObserver(new LifecycleEventObserver() {
+//            @Override
+//            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+//                if (event.equals(Lifecycle.Event.ON_DESTROY)) {
+//                    navBackStackEntry.getLifecycle().removeObserver(observer);
+//                }
+//            }
+//        });
+    }
 }
