@@ -1,9 +1,12 @@
 package com.hziee.management;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -53,7 +56,7 @@ public class TaskListFragment extends Fragment {
                 TaskListFragmentDirections.navigateToTaskDetail(taskId);
         NavHostFragment.findNavController(this).navigate(directions);
     };
-    private int mColumnCount = 1;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -78,10 +81,9 @@ public class TaskListFragment extends Fragment {
         projectId = ProjectFragmentArgs.fromBundle(getArguments()).getProjectId();
         Log.d(TAG,"传递过来的工程记录ID为："+projectId);
         this.projectId = getArguments().getInt(ARG_PROJECT_ID);
-        taskListViewModel = new ViewModelProvider((ViewModelStoreOwner) this, (ViewModelProvider.Factory) ViewModelProvider
-                .AndroidViewModelFactory.getInstance(getActivity().getApplication()))
-                .get(TaskListViewModel.class);
+        taskListViewModel = new ViewModelProvider(this).get(TaskListViewModel.class);
         taskListViewModel.initDatabase(TaskRepository.getInstance());
+
     }
 
     @Override
@@ -96,6 +98,28 @@ public class TaskListFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.fragment_task_list,menu);
+                SearchView searchView = (SearchView) menu.findItem(R.id.search_task).getActionView();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Log.d(TAG, "onQueryTextSubmit: "+query);
+                        updateUI(query);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+                searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        Log.d(TAG, "onClose: 关闭搜索框");
+                        updateUI();
+                        return false;
+                    }
+                });
             }
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
@@ -111,7 +135,7 @@ public class TaskListFragment extends Fragment {
         return view;
     }
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
         super.onViewCreated(view,savedInstanceState);
 
         updateUI();
@@ -123,7 +147,20 @@ public class TaskListFragment extends Fragment {
                 getViewLifecycleOwner(), new Observer<List<Task>>() {
                     @Override
                     public void onChanged(List<Task> tasks) {
-                        //TODO
+                        taskAdapter = new TaskListRecyclerViewAdapter(tasks,mCallbacks);
+                        taskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        taskRecyclerView.setAdapter(taskAdapter);
+                    }
+                }
+        );
+    }
+    private void updateUI(String taskName) {
+
+        taskListViewModel.getTasks(taskName).observe(
+                getViewLifecycleOwner(), new Observer<List<Task>>() {
+                    @Override
+                    public void onChanged(List<Task> tasks) {
+
                         taskAdapter = new TaskListRecyclerViewAdapter(tasks,mCallbacks);
                         taskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         taskRecyclerView.setAdapter(taskAdapter);

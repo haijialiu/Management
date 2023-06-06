@@ -20,6 +20,10 @@ public class TaskListViewModel extends ViewModel {
         taskLivaData = taskRepository.getTasksByProjectId(projectId);
         return taskLivaData;
     }
+    public LiveData<List<Task>> getTasks(String taskName){
+        taskLivaData = taskRepository.getTasksByName(taskName);
+        return taskLivaData;
+    }
     public long addTask(Task task){
         return taskRepository.addTask(task);
     }

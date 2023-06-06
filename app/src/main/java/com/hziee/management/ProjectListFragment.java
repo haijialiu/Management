@@ -1,9 +1,12 @@
 package com.hziee.management;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -84,15 +88,23 @@ public class ProjectListFragment extends Fragment implements Callbacks{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        projectListViewModel = new ViewModelProvider((ViewModelStoreOwner) this, (ViewModelProvider.Factory) ViewModelProvider
+//                .AndroidViewModelFactory.getInstance(getActivity().getApplication()))
+//                .get(ProjectListViewModel.class);
+        projectListViewModel = new ViewModelProvider(this).get(ProjectListViewModel.class);
 
-        projectListViewModel = new ViewModelProvider((ViewModelStoreOwner) this, (ViewModelProvider.Factory) ViewModelProvider
-                .AndroidViewModelFactory.getInstance(getActivity().getApplication()))
-                .get(ProjectListViewModel.class);
         projectListViewModel.initDatabase(ProjectRepository.getInstance());
+
+        Intent intent = getActivity().getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+//            doMySearch(query);
+            Log.d(TAG, query);
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_project_list, container, false);
@@ -104,6 +116,29 @@ public class ProjectListFragment extends Fragment implements Callbacks{
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.fragment_project_list,menu);
+
+                SearchView searchView = (SearchView) menu.findItem(R.id.search_project).getActionView();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Log.d(TAG, "onQueryTextSubmit: "+query);
+                        updateUI(query);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+                searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        Log.d(TAG, "onClose: 关闭搜索框");
+                        updateUI();
+                        return false;
+                    }
+                });
             }
 
             @Override
@@ -146,8 +181,8 @@ public class ProjectListFragment extends Fragment implements Callbacks{
                 }
         );
     }
-    private void updateUI(String condition,String value) {
-        projectListViewModel.getProjects(condition, value).observe(
+    private void updateUI(String value) {
+        projectListViewModel.getProjects(value).observe(
                 getViewLifecycleOwner(), new Observer<List<Project>>() {
                     @Override
                     public void onChanged(List<Project> projects) {

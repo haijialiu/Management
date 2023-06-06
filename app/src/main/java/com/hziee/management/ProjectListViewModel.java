@@ -20,8 +20,8 @@ public class ProjectListViewModel extends ViewModel {
         projectListLiveData = projectRepository.getProjects();
         return projectListLiveData;
     }
-    public LiveData<List<Project>> getProjects(String condition,String value) {
-        projectListLiveData = projectRepository.getProjects(condition, value);
+    public LiveData<List<Project>> getProjects(String value) {
+        projectListLiveData = projectRepository.getProjects(value);
         return projectListLiveData;
     }
 

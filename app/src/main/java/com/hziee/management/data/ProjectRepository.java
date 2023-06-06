@@ -10,7 +10,6 @@ import com.hziee.management.entity.Project;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 public class ProjectRepository {
@@ -33,8 +32,8 @@ public class ProjectRepository {
     public LiveData<List<Project>> getProjects(){
         return projectDao.getAll();
     }
-    public LiveData<List<Project>> getProjects(String condition,String value){
-        return projectDao.getByCondition(condition,value);
+    public LiveData<List<Project>> getProjects(String value){
+        return projectDao.getByName(value);
     }
     public LiveData<Project> getProject(Integer id){
         return projectDao.getProject(id);

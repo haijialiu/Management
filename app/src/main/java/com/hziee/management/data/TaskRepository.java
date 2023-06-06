@@ -30,6 +30,10 @@ public class TaskRepository {
     public LiveData<List<Task>> getTasksByProjectId(Integer projectId){
         return taskDao.getTaskByProjectId(projectId);
     }
+    public LiveData<List<Task>> getTasksByName(String taskName){
+        return taskDao.getTaskByName(taskName);
+    }
+
     public LiveData<Task> getTaskById(Integer taskId){
         return taskDao.getTask(taskId);
     }

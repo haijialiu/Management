@@ -20,6 +20,8 @@ public interface TaskDao {
 
     @Query("SELECT t.* FROM task t join project p on t.project_id = p.project_id where p.project_id=(:projectId)")
     LiveData<List<Task>> getTaskByProjectId(Integer projectId);
+    @Query("SELECT * FROM task WHERE name like '%' || :taskName || '%'")
+    LiveData<List<Task>> getTaskByName(String taskName);
 
     @Query("SELECT * FROM task WHERE task_id=(:id)")
     LiveData<Task> getTask(Integer id);

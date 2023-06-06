@@ -1,6 +1,8 @@
 package com.hziee.management;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -68,6 +70,8 @@ public class ProjectFragment extends Fragment {
 
         projectViewModel = new ViewModelProvider(this)
                 .get(ProjectViewModel.class);
+
+
         projectLiveData = projectViewModel.loadProject(projectId);
 
     }
