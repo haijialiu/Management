@@ -5,6 +5,11 @@
     android:id="@+id/management_graph"
     app:startDestination="@id/project_list">
     <fragment
+        android:id="@+id/login_fragment"
+        android:name="com.hziee.management.LoginFragment"
+        android:label="login"
+        tools:layout="@layout/fragment_login"/>
+    <fragment
         android:id="@+id/project_list"
         android:name="com.hziee.management.ProjectListFragment"
         android:label="project list"
@@ -12,6 +17,7 @@
         <action
             android:id="@+id/navigate_to_product_detail"
             app:destination="@id/projectFragment" />
+
     </fragment>
 
     <fragment

@@ -12,8 +12,13 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +34,7 @@ import android.view.ViewGroup;
 
 import com.hziee.management.data.ProjectRepository;
 import com.hziee.management.entity.Project;
+import com.hziee.management.entity.User;
 
 import java.util.List;
 
@@ -41,6 +47,7 @@ public class ProjectListFragment extends Fragment implements Callbacks{
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "ProjectListFragment";
     // TODO: Customize parameters
+    private UserViewModel userViewModel;
     private ProjectListViewModel projectListViewModel;
     private ProjectListRecyclerViewAdapter projectAdapter;
     private RecyclerView projectRecyclerView;
@@ -88,19 +95,33 @@ public class ProjectListFragment extends Fragment implements Callbacks{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        projectListViewModel = new ViewModelProvider((ViewModelStoreOwner) this, (ViewModelProvider.Factory) ViewModelProvider
-//                .AndroidViewModelFactory.getInstance(getActivity().getApplication()))
-//                .get(ProjectListViewModel.class);
-        projectListViewModel = new ViewModelProvider(this).get(ProjectListViewModel.class);
+        projectListViewModel = new ViewModelProvider(getActivity()).get(ProjectListViewModel.class);
 
         projectListViewModel.initDatabase(ProjectRepository.getInstance());
 
         Intent intent = getActivity().getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-//            doMySearch(query);
             Log.d(TAG, query);
         }
+
+        NavController navController = NavHostFragment.findNavController(this);
+
+        NavBackStackEntry navBackStackEntry = navController.getCurrentBackStackEntry();
+        SavedStateHandle savedStateHandle = navBackStackEntry.getSavedStateHandle();
+        savedStateHandle.getLiveData(LoginFragment.LOGIN_SUCCESSFUL)
+                .observe(navBackStackEntry, new Observer<Object>() {
+                    @Override
+                    public void onChanged(Object success) {
+                        if (!(Boolean)success) {
+                            int startDestination = navController.getGraph().getStartDestination();
+                            NavOptions navOptions = new NavOptions.Builder()
+                                    .setPopUpTo(startDestination, true)
+                                    .build();
+                            navController.navigate(startDestination, null, navOptions);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -159,7 +180,17 @@ public class ProjectListFragment extends Fragment implements Callbacks{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view,savedInstanceState);
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        final NavController navController = Navigation.findNavController(view);
+        Log.d(TAG, "onViewCreated: "+userViewModel);
+        userViewModel.user.observe(getViewLifecycleOwner(), (Observer<User>) user -> {
+            if (user != null) {
+                Log.d(TAG, "onViewCreated: welcome");
+            } else {
+                navController.navigate(R.id.login_fragment);
+            }
 
+        });
         updateUI();
     }
 

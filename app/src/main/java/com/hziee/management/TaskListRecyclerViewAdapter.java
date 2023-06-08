@@ -8,17 +8,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hziee.management.entity.Task;
-import com.hziee.management.placeholder.PlaceholderContent.PlaceholderItem;
-import com.hziee.management.databinding.FragmentTaskBinding;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
- * TODO: Replace the implementation with code for your data type.
- */
+
 public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRecyclerViewAdapter.TaskHolder> {
 
     private final List<Task> mTasks;

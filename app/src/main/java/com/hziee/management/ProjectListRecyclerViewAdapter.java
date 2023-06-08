@@ -13,16 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hziee.management.entity.Project;
-import com.hziee.management.placeholder.PlaceholderContent.PlaceholderItem;
+
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
- * TODO: Replace the implementation with code for your data type.
- */
+
 public class ProjectListRecyclerViewAdapter extends RecyclerView.Adapter<ProjectListRecyclerViewAdapter.ProjectHolder> {
 
     private final List<Project> projects;

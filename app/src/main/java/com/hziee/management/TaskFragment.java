@@ -92,12 +92,11 @@ public class TaskFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                taskViewModel.deleteTask(mTask.getId());
-                getActivity().onBackPressed();
-            }
+        deleteButton.setOnClickListener(v -> {
+            taskViewModel.deleteTask(mTask.getId());
+
+            //getActivity().onBackPressed();
+            NavHostFragment.findNavController(this).popBackStack();
         });
         taskTitleEditText.addTextChangedListener(new TextWatcher() {
             @Override

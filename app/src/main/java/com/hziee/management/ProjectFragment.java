@@ -107,12 +107,10 @@ public class ProjectFragment extends Fragment {
     public void onStart() {
 
         super.onStart();
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                projectViewModel.deleteProject(mProject.getId());
-                getActivity().onBackPressed();
-            }
+        deleteButton.setOnClickListener(v -> {
+            projectViewModel.deleteProject(mProject.getId());
+            //getActivity().onBackPressed();
+            NavHostFragment.findNavController(this).popBackStack();
         });
         projectTitleEditText.addTextChangedListener(new TextWatcher() {
             @Override
